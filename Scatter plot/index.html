@@ -178,7 +178,6 @@ function plot(params){
 }
 
 d3.csv("survey_data.csv", function(error, parsed_data){
-	console.log("First")
 	plot.call(chart, {
 		data: parsed_data,
 		axis: {
@@ -192,7 +191,7 @@ d3.csv("survey_data.csv", function(error, parsed_data){
 		initialize: true
 	})
 });
-	console.log("Second");
+
 </script>
 </body>
 </html>
