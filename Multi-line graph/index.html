@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+
+    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="http://getbootstrap.com/examples/justified-nav/justified-nav.css" rel="stylesheet">
+
+    <style>
+        .axis path {
+            fill: none;
+            stroke: #777;
+            shape-rendering: crispEdges;
+        }
+        .axis text {
+            font-family: Lato;
+            font-size: 13px;
+        }
+        .legend {
+    font-size: 14px;
+    font-weight: bold;
+}
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="jumbotron">
+
+            <svg id="visualisation" width="1000" height="500"></svg>
+            <script src="d3.min.js" charset="utf-8"></script>
+            <script src="data.js"> </script>
+            <script>
+                function InitChart() {
+
+                    var dataGroup = d3.nest()
+                        .key(function(d) {return d.Client;})
+                        .entries(data);
+
+
+
+                    // console.log(JSON.stringify(dataGroup));
+
+                    var color = d3.scale.category20();
+
+                    var vis = d3.select("#visualisation"),
+                        width = 1000,
+                        height = 500,
+                         margin = {
+                            top: 50,
+                            right: 20,
+                            bottom: 50,
+                            left: 50
+                        },
+
+                        lSpace = width/dataGroup.length;
+
+                        xScale = d3.scale.linear().range([margin.left, width - margin.right]).domain([d3.min(data, function(d) {
+                            return d.year;
+                        }), d3.max(data, function(d) {
+                            return d.year;
+                        })]),
+                        // yScale = d3.scale.linear()
+                        //  .range([height - margin.top, margin.bottom]).domain([d3.min(data, function(d) {
+                        //     return d.sale;
+                        // }), d3.max(data, function(d) {
+                        //     return d.sale;
+                        // })]);
+                        yScale = d3.scale.linear()
+                        .range([height - margin.top, margin.bottom])
+                        .domain([0,500]),
+
+                        xAxis = d3.svg.axis()
+                        .scale(xScale)
+                        .orient("bottom");
+
+                        yAxis = d3.svg.axis()
+                        .scale(yScale)
+                        .orient("left");
+
+
+
+                    
+
+                    vis.append("svg:g")
+                        .attr("class", "x axis")
+                        .attr("transform", "translate(0," + (height - margin.bottom) + ")")
+                        .call(xAxis);
+
+                    vis.append("svg:g")
+                        .attr("class", "y axis")
+                        .attr("transform", "translate(" + (margin.left) + ",0)")
+                        .call(yAxis);
+                        
+                    var lineGen = d3.svg.line()
+                        .x(function(d) {
+                            return xScale(d.year);
+                        })
+                        .y(function(d) {
+                            return yScale(d.sale);
+                        })
+                        .interpolate("basis");
+
+                    dataGroup.forEach(function(d,i) {
+                        vis.append('svg:path')
+                        .attr('d', lineGen(d.values))
+                        .attr('stroke', function(d,j) { 
+                                return "hsl(" + Math.random() * 360 + ",100%,50%)";
+                        })
+                        .attr('stroke-width', 2)
+                        .attr('id', 'line_'+d.key)
+                        .attr('fill', 'none');
+
+
+                        vis.append("text")
+                            .attr("x", (lSpace/2)+i*lSpace)
+                            .attr("y", height)
+                            .style("fill", "black")
+                            .attr("class","legend")
+                            .on('click',function(){
+                                var active   = d.active ? false : true;
+                                var opacity = active ? 0 : 1;
+
+                                d3.select("#line_" + d.key)
+                                .style("opacity", opacity);
+
+                                d.active = active;
+                            })
+                            .text(d.key);
+                    });
+
+
+                    
+                }
+
+                
+
+                InitChart();
+            </script>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
