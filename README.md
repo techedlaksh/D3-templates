@@ -1,2 +1,13 @@
 # D3-templates
-d3 templates for website projects
+
+### Boilerplate D3 Graphs for v3 library
+
+#### Bar Graph
+
+#### Line Graph
+
+#### Multi-Line Graph
+
+#### Pie Graph
+
+#### Scatter Plot
